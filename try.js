@@ -1,9 +1,9 @@
+var errorMiles = document.getElementById("errorMiles");
+errorMiles.style.display = "none"; 
+
 function checkInput(){
   var inputBox = document.getElementById("numMiles");
-  var errorMiles = document.getElementById("errorMiles");
   var milesSubmit = document.getElementById("milesSubmit");
-
-  errorMiles.style.display = "none"; 
 
   if (inputBox.value <= 0) {
     errorMiles.style.display = "inline";
