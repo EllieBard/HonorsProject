@@ -1,16 +1,19 @@
-var inputBox = document.getElementById("numMiles");
-document.getElementById("errorMiles").style.display = "none";
 function checkInput(){
-  if (inputBox.value < 0){
-     document.getElementById("errorMiles").style.display = "inline";
-      return false;
-  }
-  else{
-    document.getElementById("numMiles").disabled = true;
-    document.getElementById("numMiles").text = inputBox.value;
-     document.getElementById("errorMiles").style.display = "none";
-    document.getElementById("milesSubmit").style.display = "none";
-      return true;
+  var inputBox = document.getElementById("numMiles");
+  var errorMiles = document.getElementById("errorMiles");
+  var milesSubmit = document.getElementById("milesSubmit");
+
+  errorMiles.style.display = "none"; 
+
+  if (inputBox.value <= 0) {
+    errorMiles.style.display = "inline";
+    return false; 
+  } 
+  else {
+    inputBox.disabled = true;
+    errorMiles.style.display = "none";
+    milesSubmit.style.display = "none"; 
+    return true; 
   }
 }
 
