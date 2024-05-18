@@ -11,6 +11,7 @@ function checkInput(){
   } 
   else {
     inputBox.disabled = true;
+    inputBox.text = inputBox.value;
     errorMiles.style.display = "none";
     milesSubmit.style.display = "none"; 
     return true; 
