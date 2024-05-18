@@ -6,6 +6,7 @@ function checkInput(){
       return false;
   }
   else{
+    document.getElementById("numMiles").disabled = true;
      document.getElementById("errorMiles").style.display = "none";
     document.getElementById("milesSubmit").style.display = "none";
       return true;
