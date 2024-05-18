@@ -7,6 +7,7 @@ function checkInput(){
   }
   else{
      document.getElementById("errorMiles").style.display = "none";
+    document.getElementById("milesSubmit").style.display = "none";
       return true;
   }
 }
