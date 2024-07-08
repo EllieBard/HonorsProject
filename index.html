@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" 
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="mystyle.css">
+</head>
+
+<body>
+    <!--Title-->
+    <h2>CO2 Emissions Calculator</h2>
+    <h3>To restart, reload the page.</h3>
+
+    <!-- First Question-->
+    <div id="divMiles">
+        <label for="milesInput">Please enter the number of miles you have traveled in the past year:</label>
+        <br>
+        <input type="number" id="milesInput" min=0>
+        <input type="button" value="Submit" id="milesSubmit" onclick="checkInputMiles()">
+        <br>
+        <p id="errorMiles" name="error">Error - number of miles must be greater than 0.</p>
+    </div>
+
+    <!--Second Question-->
+    <div id="divYear">
+        <label for="yearInput">Please enter the year the car was produced:</label>
+        <br>
+        <input type="number" id="yearInput" min=1950>
+        <input type="button" value="Submit" id="yearSubmit" onclick="checkInputYear()">
+        <br>
+        <p id="errorYear" name="error">Error - Year must be greater than 1950 and less than 2026.</p>
+    </div>
+
+    <!--Third Question-->
+    <div id="divMake">
+        <label for="makeDropdown">Please choose or type in the make:</label>
+        <br>
+        <select id="makeDropdown">
+            <option value="Other">Other</option>
+        </select>
+        <input type="text" id="makeInput">
+        <input type="button" value="Submit" id="makeSubmit" onclick="setValueMake()">
+    </div>
+
+    <!--Fourth Question-->
+    <div id="divModel">
+        <label for="modelDropdown">Please choose or type in the model:</label>
+        <br>
+        <select id="modelDropdown">
+            <option value="Other">Other</option>
+        </select>
+        <select id="modelDetailDropdown">
+            <option value="Other">Other</option>
+        </select>
+        <input type="text" id="modelInput">
+        <input type="button" value="Submit" id="modelSubmit" onclick="setValueModel()">
+    </div>
+
+    <!--Fifth (optional) Question-->
+    <div id="divFuel">
+        <p>Information on this vehicle is not available. Please answer some additional questions.</p>
+        <form id="fuelForm">
+            <p>Please choose the vehicle's fuel type:</p>
+            <input id="gasRadio" name="fuelRadio" value="1" type="radio">
+            <label for="gasRadio">Gasoline</label><br>
+            <input id="diesRadio" value="2" name="fuelRadio" type="radio">
+            <label for="diesRadio">Diesel</label><br>
+            <input id="elecRadio" value="3" name="fuelRadio" type="radio">
+            <label for="elecRadio">Electric</label><br><br>
+            <input type="button" value="Submit" id="fuelSubmit" onclick="setValueFuel()">
+        </form>
+    </div>
+
+    <!--Sixth (optional) Question-->
+    <div id="divMpg">
+        <label for="mpgInput">Please enter the vehicle's mpg:</label><br>
+        <input type="number" id="mpgInput" min=1>
+        <p id="errorMpg" name="error">Error - MPG must be greater than 0.</p>
+        <input type="button" value="Submit" id="mpgSubmit" onclick="checkInputMpg()">
+    </div>
+
+    <!--Seventh Question-->
+    <div id="divPercent">
+        <label for="percentCityInput">Please enter the percentage of distance spent in the city and/or making frequent stops as a number between 0 and 100:</label><br>
+        <input type="number" id="percentCityInput" min="0" max="100">
+        <br><br>
+        <label for="percentHighwayInput">Please enter the percentage of distance spent on the highway and/or above 55mph as a number between 0 and 100:</label><br>
+        <input type="number" id="percentHighwayInput" min="0" max="100">
+        <p id="errorPercent" name="error">Error - The percentages must be between 1 and 100 and their sum cannot be greater than 100.</p>
+        <input type="button" value="Submit" id="percentSubmit" onclick="checkInputPercent()">
+    </div>
+
+    <!--Calculating results-->
+    <div id="divCalculation">
+        <p id="vehicleDescription"></p>
+        <p id="calcResults"></p>
+    </div>
+
+<script>
+
+var miles, year, make = "Other", model = "Other", fuelType, mpg, cityMpg, highwayMpg, cityPercent, highwayPercent;
+var hasDetailedMpg = false, percentSum;
+const gasEm = "19.59", dieselEm = "22.45";
+
+var divMiles = document.getElementById("divMiles");
+var errorMiles = document.getElementById("errorMiles");
+var milesInput = document.getElementById("milesInput");
+var milesSubmit = document.getElementById("milesSubmit");
+errorMiles.style.display = "none";
+
+var divYear = document.getElementById("divYear");
+var errorYear = document.getElementById("errorYear");
+var yearInput = document.getElementById("yearInput");
+var yearSubmit = document.getElementById("yearSubmit");
+divYear.style.display = "none"; 
+
+var divMake = document.getElementById("divMake");
+var makeInput = document.getElementById("makeInput");
+var makeDropdown = document.getElementById("makeDropdown");
+var makeSubmit = document.getElementById("makeSubmit");
+divMake.style.display = "none"; 
+
+var divModel = document.getElementById("divModel");
+var modelInput = document.getElementById("modelInput");
+var modelDetailDropdown = document.getElementById("modelDetailDropdown");
+var modelSubmit = document.getElementById("modelSubmit");
+divModel.style.display = "none"; 
+
+var divFuel = document.getElementById("divFuel");
+var fuelForm = document.getElementById("fuelForm");
+var fuelSubmit = fuelForm.elements["fuelSubmit"];
+var fuelRadio = fuelForm.elements["fuelRadio"];
+divFuel.style.display = "none"; 
+
+var divMpg = document.getElementById("divMpg");
+var errorMpg = document.getElementById("errorMpg");
+var mpgSubmit = document.getElementById("mpgSubmit");
+var mpgInput = document.getElementById("mpgInput");
+divMpg.style.display = "none"; 
+
+var divPercent = document.getElementById("divPercent");
+var errorPercent = document.getElementById("errorPercent");
+var percentSubmit = document.getElementById("percentSubmit");
+var percentCityInput = document.getElementById("percentCityInput");
+var percentHighwayInput = document.getElementById("percentHighwayInput");
+divPercent.style.display = "none"; 
+errorPercent.style.display = "none"; 
+
+var divCalculation = document.getElementById("divCalculation");
+var vehicleDescription = document.getElementById("vehicleDescription");
+var calcResults = document.getElementById("calcResults");
+divCalculation.style.display = "none"; 
+
+
+function checkInputMiles(){
+  if (milesInput.value <= 0) {
+    errorMiles.style.display = "block"; 
+    milesInput.style.borderColor = "red";
+    errorMiles.style.color = "red";
+  } 
+  else {
+    milesInput.style.borderColor = "initial";
+    milesInput.disabled = true;
+    miles = +milesInput.value;
+    errorMiles.style.display = "none";
+    milesSubmit.style.display = "none";
+    divYear.style.display = "block";
+    errorYear.style.display = "none";
+  }
+}
+
+function checkInputYear(){
+  if (yearInput.value <= 1950 || yearInput.value > 2025) {
+    errorYear.style.display = "block"; 
+    yearInput.style.borderColor = "red";
+    errorYear.style.color = "red";
+  } 
+  else {
+    yearInput.style.borderColor = "initial";
+    yearInput.disabled = true;
+    year = +yearInput.value;
+    yearSubmit.style.display = "none";
+    errorYear.style.display = "none";
+    divMake.style.display = "block";
+    if(!(year < 1984 || year > 2026)){
+        makeInput.style.display = "none"; 
+        $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/make?year=' + year, function(data) { 
+            var makeList = $(data).find('menuItem');
+            $.each(makeList, function(index, value){
+                var option = document.createElement("option");
+                option.value = $(value).find("value").text();
+                option.text = $(value).find("text").text();
+                makeDropdown.append(option);
+            });
+        });
+    }
+    else{
+        makeDropdown.disabled = true;
+    }
+  }
+}
+
+function setValueMake(){
+    make = makeDropdown.value;
+    makeDropdown.disabled = true; 
+    if(make == "Other"){
+        makeInput.style.display = "inline";
+        if(makeInput.value != ""){
+            make = makeInput.value;
+            makeInput.disabled = true;
+            modelDropdown.disabled = true;
+            modelDetailDropdown.disabled = true;
+            divModel.style.display = "block"; 
+            makeSubmit.style.display = "none";
+        }
+    }
+    else{
+        makeSubmit.style.display = "none"; 
+        divModel.style.display = "block"; 
+        modelInput.style.display = "none";
+        modelDetailDropdown.style.display = "none"; 
+        $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/model?year='+ year + '&make=' + make, function(data) { 
+            var modelList = $(data).find('menuItem');
+            $.each(modelList, function(index, value){
+                var option = document.createElement("option");
+                option.value = $(value).find("value").text();
+                option.text = $(value).find("text").text();
+                modelDropdown.append(option);
+            });
+        });
+    }
+}
+
+function setValueModel(){
+    model = modelDropdown.value;
+    modelDropdown.disabled = true;
+    if(model == "Other"){
+        modelInput.style.display = "inline"; 
+        if(modelInput.value != "" && modelDetailDropdown.value == "Other"){
+            model = modelInput.value;
+            modelInput.disabled = true;
+            divFuel.style.display = "block";
+            modelSubmit.style.display = "none";
+        }
+    }
+    else{
+        modelDetailDropdown.style.display = "inline";
+        $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year='+ year + '&make=' + make + '&model=' + model, function(data) { 
+            var modelDetailList = $(data).find('menuItem');
+            $.each(modelDetailList, function(index, value){
+                var option = document.createElement("option");
+                option.value = $(value).find("value").text();
+                option.text = $(value).find("text").text();
+                modelDetailDropdown.append(option);
+            });
+        });
+        if (modelDetailDropdown.value != "Other"){
+            modelSubmit.style.display = "none";
+            modelDetailDropdown.disabled = true;
+            $.get('https://www.fueleconomy.gov//ws/rest/vehicle/'+ modelDetailDropdown.value, function(data) { 
+                mpg = $(data).find('comb08').text();
+                var fuelText = $(data).find('fuelType1');
+                if(fuelText.text() == "Regular Gasoline" || fuelText.text() == "Premium Gasoline"){
+                    fuelType = 1;
+                }
+                else if(fuelText.innerHTML == "Diesel"){
+                    fuelType = 2;
+                }
+                else{
+                    fuelType = 3;
+                }
+                var dataHighwayMpg = $(data).find('highway08').text();
+                if(dataHighwayMpg != null){
+                    highwayMpg = dataHighwayMpg;
+                    var dataCityMpg = $(data).find('city08').text();
+                    if(dataCityMpg != null){
+                        cityMpg = dataCityMpg;
+                        hasDetailedMpg = true;
+                    }
+                }
+                divPercent.style.display = "block";
+            });
+        }
+    }
+}
+
+function setValueFuel(){
+    fuelType = fuelForm.elements["fuelRadio"].value;
+    fuelForm.elements["fuelRadio"].disabled = true;
+    fuelForm.elements["fuelSubmit"].style.display = "none";
+    divMpg.style.display = "block";
+    errorMpg.style.display = "none";
+}
+
+function checkInputMpg(){
+    if (mpgInput.value <= 0) {
+        errorMpg.style.display = "block"; 
+        mpgInput.style.borderColor = "red";
+        errorMpg.style.color = "red";
+    } 
+    else {
+        mpgInput.style.borderColor = "initial";
+        mpg = mpgInput.value;
+        mpgInput.disabled = true;
+        errorMpg.style.display = "none";
+        mpgSubmit.style.display = "none";
+        calculateco2();
+    }
+}
+
+function checkInputPercent(){
+    percentSum = percentCityInput.value / 100 + percentHighwayInput.value / 100;
+    if (percentCityInput.value < 0 || percentHighwayInput.value < 0 || percentSum > 1) {
+        percentCityInput.style.borderColor = "red";
+        percentHighwayInput.style.borderColor = "red";
+        errorPercent.style.color = "red";
+        errorPercent.style.display = "block";
+    } 
+    else {
+        percentCityInput.style.borderColor = "initial";
+        percentHighwayInput.style.borderColor = "initial";
+        cityPercent = percentCityInput.value / 100;
+        highwayPercent = percentHighwayInput.value / 100;
+        percentCityInput.disabled = true;
+        percentHighwayInput.disabled = true;
+        errorPercent.style.display = "none";
+        percentSubmit.style.display = "none";
+        calculateco2();
+    }
+}
+
+function calculateco2(){
+    var co2em;
+    if(hasDetailedMpg){
+        co2em = (cityPercent * miles / cityMpg ) + (highwayPercent * miles / highwayMpg) + ((1 - percentSum) * miles/mpg)
+        if (fuelType == 1){
+        co2em = gasEm * co2em;
+        }
+        else if (fuelType == 2){
+        co2em = dieselEm * co2em;
+        }
+        else{
+            co2em = 0;
+        }
+    }
+    else{
+        if (fuelType == 1){
+        co2em = gasEm * miles / mpg;
+        }
+        else if (fuelType == 2){
+        co2em = dieselEm * miles / mpg;
+        }
+        else{
+        co2em = 0;
+        }
+    }
+    divCalculation.style.display = "block";
+    vehicleDescription.innerHTML = "The " + year + " " + make + " " + model + " has an average fuel efficiency of " + mpg + " mpg.";
+    calcResults.innerHTML = "The number of pounds of C02 emitted in the past year after traveling " + miles + " miles is " + Math.round(co2em) + ".";
+}
+
+</script>
+</body>
