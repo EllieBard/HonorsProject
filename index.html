@@ -153,9 +153,16 @@ divCalculation.style.display = "none";
 
 
 function getData(){
-    $.get("https://www.fueleconomy.gov/feg/epadata/vehicles.csv", function(data) {
-        var info = $.csv.toArray(data);
-        alert(info);
+    $.ajax({
+        headers: {'Access-Control-Allow-Origin': 'https://elliebard.github.io', 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Credentials' : true},
+        url: 'https://www.fueleconomy.gov/feg/epadata/vehicles.csv',
+        method: 'GET',
+        success: function(){  
+            alert('success');  
+        },
+        error: function() { 
+            alert('error'); 
+        } 
     });
 }
     
