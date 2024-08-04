@@ -154,8 +154,8 @@ divCalculation.style.display = "none";
 
 function getData(){
     $.ajax({
-        headers: {'Access-Control-Allow-Origin': 'http://www.fueleconomy.gov', 'Access-Control-Allow-Credentials' : true},
-        url: 'http://www.fueleconomy.gov/feg/epadata/vehicles.csv',
+        headers: {'Access-Control-Allow-Origin': 'https://www.fueleconomy.gov', 'Access-Control-Allow-Credentials' : true},
+        url: 'https://www.fueleconomy.gov/feg/epadata/vehicles.csv',
         method: 'GET',
         success: function(){  
             alert('success');  
