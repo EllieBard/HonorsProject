@@ -152,7 +152,15 @@ var calcResults = document.getElementById("calcResults");
 divCalculation.style.display = "none"; 
 
 
+function getData(){
+    $.get("https://www.fueleconomy.gov/feg/epadata/vehicles.csv", function(data) {
+        var info = $.csv.toArray(data);
+        alert(info);
+    });
+}
+    
 function checkInputMiles(){
+    getData();
   if (milesInput.value <= 0) {
     errorMiles.style.display = "block"; 
     milesInput.style.borderColor = "red";
