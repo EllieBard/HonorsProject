@@ -151,18 +151,11 @@ var vehicleDescription = document.getElementById("vehicleDescription");
 var calcResults = document.getElementById("calcResults");
 divCalculation.style.display = "none"; 
 
-async function getData(){
-    $.get("vehicles.csv", function(data) {
-        alert(data);
-    });
-}
-
+//Validate miles input. If valid, show next question
 function checkInputMiles(){
-    getData();
   if (milesInput.value <= 0) {
     errorMiles.style.display = "block"; 
     milesInput.style.borderColor = "red";
-    errorMiles.style.color = "red";
   } 
   else {
     milesInput.style.borderColor = "initial";
@@ -175,11 +168,11 @@ function checkInputMiles(){
   }
 }
 
+//Validate year input. If valid, show next question
 function checkInputYear(){
   if (yearInput.value <= 1950 || yearInput.value > 2025) {
     errorYear.style.display = "block"; 
     yearInput.style.borderColor = "red";
-    errorYear.style.color = "red";
   } 
   else {
     yearInput.style.borderColor = "initial";
@@ -190,6 +183,7 @@ function checkInputYear(){
     divMake.style.display = "block";
     if(!(year < 1984 || year > 2026)){
         makeInput.style.display = "none"; 
+        //Display dropdown with makes
         $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/make?year=' + year, function(data) { 
             var makeList = $(data).find('menuItem');
             $.each(makeList, function(index, value){
@@ -206,6 +200,7 @@ function checkInputYear(){
   }
 }
 
+//Check user selected value for make, allow user to input model
 function setValueMake(){
     make = makeDropdown.value;
     makeDropdown.disabled = true; 
@@ -225,6 +220,7 @@ function setValueMake(){
         divModel.style.display = "block"; 
         modelInput.style.display = "none";
         modelDetailDropdown.style.display = "none"; 
+        //Display dropdown with models
         $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/model?year='+ year + '&make=' + make, function(data) { 
             var modelList = $(data).find('menuItem');
             $.each(modelList, function(index, value){
@@ -237,6 +233,7 @@ function setValueMake(){
     }
 }
 
+//Check user input value for model, determine if vehicle data available
 function setValueModel(){
     model = modelDropdown.value;
     modelDropdown.disabled = true;
@@ -251,6 +248,7 @@ function setValueModel(){
     }
     else{
         modelDetailDropdown.style.display = "inline";
+        //Display dropdown with detailed model options
         $.get('https://www.fueleconomy.gov/ws/rest/vehicle/menu/options?year='+ year + '&make=' + make + '&model=' + model, function(data) { 
             var modelDetailList = $(data).find('menuItem');
             $.each(modelDetailList, function(index, value){
@@ -263,8 +261,11 @@ function setValueModel(){
         if (modelDetailDropdown.value != "Other"){
             modelSubmit.style.display = "none";
             modelDetailDropdown.disabled = true;
+            //Search data for vehicle
             $.get('https://www.fueleconomy.gov//ws/rest/vehicle/'+ modelDetailDropdown.value, function(data) { 
+                //Find average mpg
                 mpg = $(data).find('comb08').text();
+                //Find fuel type
                 var fuelText = $(data).find('fuelType1');
                 if(fuelText.text() == "Regular Gasoline" || fuelText.text() == "Premium Gasoline"){
                     fuelType = 1;
@@ -275,6 +276,7 @@ function setValueModel(){
                 else{
                     fuelType = 3;
                 }
+                //Find highway and city mpg (if available)
                 var dataHighwayMpg = $(data).find('highway08').text();
                 if(dataHighwayMpg != null){
                     highwayMpg = dataHighwayMpg;
@@ -290,6 +292,7 @@ function setValueModel(){
     }
 }
 
+//If information on vehicle not available, prompt user to enter fuel type
 function setValueFuel(){
     fuelType = fuelForm.elements["fuelRadio"].value;
     fuelForm.elements["fuelRadio"].disabled = true;
@@ -298,11 +301,11 @@ function setValueFuel(){
     errorMpg.style.display = "none";
 }
 
+//If information on vehicle not available, prompt user to enter mpg
 function checkInputMpg(){
     if (mpgInput.value <= 0) {
         errorMpg.style.display = "block"; 
         mpgInput.style.borderColor = "red";
-        errorMpg.style.color = "red";
     } 
     else {
         mpgInput.style.borderColor = "initial";
@@ -314,6 +317,7 @@ function checkInputMpg(){
     }
 }
 
+//If city and highway mpg available, prompt user to enter percentage of time spent respectively
 function checkInputPercent(){
     percentSum = percentCityInput.value / 100 + percentHighwayInput.value / 100;
     if (percentCityInput.value < 0 || percentHighwayInput.value < 0 || percentSum > 1) {
@@ -335,6 +339,7 @@ function checkInputPercent(){
     }
 }
 
+//Calculate and display emissions
 function calculateco2(){
     var co2em;
     if(hasDetailedMpg){
