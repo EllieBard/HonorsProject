@@ -153,8 +153,7 @@ divCalculation.style.display = "none";
 
 async function getData(){
     $.get("vehicles.csv", function(data) {
-        var info = $.csv.toArray(data);
-        alert(info);
+        alert(data);
     });
 }
 
