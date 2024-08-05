@@ -152,7 +152,7 @@ var calcResults = document.getElementById("calcResults");
 divCalculation.style.display = "none"; 
 
 
-function getData(){
+async function getData(){
     const address = "emissions.xml";
     try {
         const response = await fetch(address);
