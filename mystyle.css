@@ -9,6 +9,8 @@ body {
 
 p, label{
     font-size: 1.15em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 h2{
@@ -25,16 +27,13 @@ h3{
     font-weight: normal;
 }
 
-input:invalid{
-    border-color: red;
-}
-
 input[type=number], select {
-    margin-top: 1em;
+    margin-top: .8em;
+    font-size: 1em;
 }
 
 div {
-    background-color: #acd3ef; 
+    background-color: #bac3ca; 
     border-radius: 5px;
     margin-left: 2%;
     margin-right: 2%;
@@ -44,5 +43,9 @@ div {
 
 #divCalculation {
     font-weight: bold;
-    font-size: 1.15em;
+    font-size: 1.13em;
+}
+
+#errorMiles, #errorYear, #errorMpg, #errorPercent{
+    color: rgb(46, 7, 7);
 }
