@@ -151,7 +151,24 @@ var vehicleDescription = document.getElementById("vehicleDescription");
 var calcResults = document.getElementById("calcResults");
 divCalculation.style.display = "none"; 
 
+async function getData(){
+    const address = "vehicles.csv";
+    try {
+        const response = await fetch(address);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const csv = await response.text();
+        var info = $.csv.toArray(csv);
+        console.log("success");
+        console.log(info);
+    }   catch (error) {
+        console.error(error.message);
+    }
+}
+
 function checkInputMiles(){
+    getData();
   if (milesInput.value <= 0) {
     errorMiles.style.display = "block"; 
     milesInput.style.borderColor = "red";
