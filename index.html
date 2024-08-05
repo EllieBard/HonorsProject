@@ -153,17 +153,17 @@ divCalculation.style.display = "none";
 
 
 function getData(){
-    $.ajax({
-        headers: {'Access-Control-Allow-Origin': 'https://www.fueleconomy.gov', 'Access-Control-Allow-Credentials' : true},
-        url: 'https://www.fueleconomy.gov/feg/epadata/vehicles.csv',
-        method: 'GET',
-        success: function(){  
-            alert('success');  
-        },
-        error: function() { 
-            alert('error'); 
-        } 
-    });
+    const address = "emissions.xml";
+    try {
+        const response = await fetch(address);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const csv = await response.text();
+        console.log(csv);
+    }   catch (error) {
+        console.error(error.message);
+    }
 }
     
 function checkInputMiles(){
