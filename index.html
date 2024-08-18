@@ -278,10 +278,10 @@ function setValueModel(){
                 }
                 //Find highway and city mpg (if available)
                 var dataHighwayMpg = $(data).find('highway08').text();
-                if(dataHighwayMpg != null){
+                if(dataHighwayMpg != -1){
                     highwayMpg = dataHighwayMpg;
                     var dataCityMpg = $(data).find('city08').text();
-                    if(dataCityMpg != null){
+                    if(dataCityMpg != -1){
                         cityMpg = dataCityMpg;
                         hasDetailedMpg = true;
                     }
